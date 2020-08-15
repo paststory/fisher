@@ -2,7 +2,31 @@
 # @Time    : 2020/8/12 19:27
 # @Author  : yang
 # @File    : book.py
+
+
+
 class BookViewModel:
+    def __init__(self, data):
+        self.title = data['title']
+        self.author = '、'.join(data['author'])
+        self.publisher = data['publisher']
+        self.image = data['image']
+        self.price = data['price']
+        self.summary = data['summary']
+        self.pages = data['pages']
+
+class BookCollection:
+    def __init__(self):
+        self.total = 0
+        self.books = []
+        self.keyword = None
+
+    def fill(self, yushu_book, keyword):
+        self.total = yushu_book.total
+        self.books = [BookViewModel(book) for book in yushu_book.books]
+        self.keyword = keyword
+
+class _BookViewModel:
     @classmethod
     def package_single(cls, data ,keyword):
         returned = {
