@@ -4,7 +4,7 @@
 # @File    : book.py
 import json
 
-from flask import request
+from flask import request, render_template, url_for, flash
 
 from app.libs.helper import is_isbn_or_key
 from app.spider.yushu_book import YuShuBook
@@ -35,6 +35,26 @@ def search():
             yushu_book.search_by_keyword(q,page=page)
 
         books.fill(yushu_book,q)
-        return json.dumps(books, default=lambda o: o.__dict__)
     else:
-        return form.errors
+        flash('根据关键字搜索不到，请重新输入')
+    return render_template('search_result.html', books=books)
+        # return form.errors
+
+
+@web.route('/book/<isbn>/detail')
+def book_detail(isbn):
+    pass
+
+@web.route('/book/htmlstudy')
+def html():
+    d1 = {
+        'age':17,
+        'name':'zhangsan'
+    }
+    d2 = {
+        'gender':'nan',
+        'phone':'135****8642'
+    }
+    flash('nihao,8yue')
+    flash('here is a trouble', category='error')
+    return render_template('test.html', d1=d1, d2=d2)

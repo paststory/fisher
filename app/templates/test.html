@@ -1,0 +1,24 @@
+{% extends 'layout.html' %}
+{% block content %}
+{{ d1.name }}:{{ d1.age }},{{ d2.gender }},{{ d2.phone }}
+{% if d1.age == 17 %}
+    名称:{{ d1.name }}<br>
+{% endif %}
+{% if True %}
+    年龄:{{ d1.age }}<br>
+{% endif %}
+{% if d2.gender == 'nan' %}
+    爱好女<br>
+{% endif %}
+
+{% for item in d1.items() %}
+    {{ item[0] }},{{ item[1] }}<br>
+{% endfor %}
+{% for item in [1,2,3,4,5] %}
+    {{ item }}<br>
+{% endfor %}
+    {% set message = get_flashed_messages() %}
+    {{ message }}
+    {% set error = get_flashed_messages(category_filter=['error']) %}
+    {{ error }}
+{% endblock %}
