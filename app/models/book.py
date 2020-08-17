@@ -6,9 +6,8 @@ import json
 from sqlalchemy import Column, String
 from sqlalchemy import Integer
 # from app.models.base import Base
-from flask_sqlalchemy import SQLAlchemy
+from app.models.base import db
 
-db = SQLAlchemy()
 
 class Book(db.Model):
     """

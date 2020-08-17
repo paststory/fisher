@@ -12,6 +12,8 @@ wtforms = "*"
 sqlalchemy = "*"
 flask-sqlalchemy = "*"
 cymysql = "*"
+email-validator = "*"
+flask-login = "*"
 
 [requires]
 python_version = "3.7"

@@ -6,8 +6,16 @@
 from flask import Flask
 
 from app.models.book import db
+from app.models.user import User
 from app.web import web
+from flask_login import LoginManager
 
+login_manager = LoginManager()
+
+@login_manager.user_loader
+def load_user(user_id):
+    user = db.session.query(User).get(user_id)
+    return user
 
 def create_app():
     app = Flask(__name__)
@@ -15,6 +23,7 @@ def create_app():
     app.config.from_object('app.secure')
     register_blueprints(app)
     db.init_app(app)
+    login_manager.init_app(app)
     # 方法一
     db.create_all(app=app)
     # 方法二

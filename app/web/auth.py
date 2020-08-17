@@ -1,15 +1,39 @@
+from flask import render_template, request, redirect, url_for, flash
+
 from . import web
 
 __author__ = '七月'
 
+from ..forms.auth import RegisterForm, LoginForm
+from ..models.base import db
+from ..models.user import User
+from flask_login import login_user
 
 @web.route('/register', methods=['GET', 'POST'])
 def register():
+    form = RegisterForm(request.form)
+    if request.method == 'POST' and form.validate():
+        user = User()
+        user.set_attrs(form.data)
+        db.session.add(user)
+        db.session.commit()
+        redirect(url_for('web.login'))
+        pass
+    return render_template('auth/register.html', form=form)
     pass
 
 
 @web.route('/login', methods=['GET', 'POST'])
 def login():
+    form = LoginForm(request.form)
+    if request.method == 'POST' and form.validate():
+        user = User.query.filter_by(email = form.data['email']).first()
+        if user and user.check_password(form.data['password']):
+            login_user(user)
+            pass
+        else:
+            flash('账号不存在或者密码有误')
+    return render_template('auth/login.html',form = form)
     pass
 
 
