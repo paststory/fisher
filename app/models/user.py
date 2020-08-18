@@ -9,8 +9,12 @@ from sqlalchemy import SmallInteger, Integer, Float
 from sqlalchemy.orm import relationship
 from werkzeug.security import generate_password_hash, check_password_hash
 
-# from app import login_manager
+from app import login_manager
+from app.libs.helper import is_isbn_or_key
 from app.models.base import db, Base
+from app.models.gift import Gift
+from app.models.wish import Wish
+from app.spider.yushu_book import YuShuBook
 
 
 class User(UserMixin,Base):
@@ -41,12 +45,32 @@ class User(UserMixin,Base):
     def check_password(self, raw):
         return check_password_hash(self._password, raw)
 
+    def can_save_to_list(self, isbn):
+        if is_isbn_or_key(isbn) != 'isbn':
+            return False
+        yushu_book = YuShuBook()
+        yushu_book.search_by_isbn(isbn)
+        if not yushu_book.first:
+            return False
+        # 判断当前用户捐献以及心愿里没有当前这本书
+        gifting = Gift.query.filter_by(uid=self.id, isbn=isbn,
+                                       launched=False).first()
+        wishing = Wish.query.filter_by(uid=self.id, isbn=isbn,
+                                       launched=False).first()
+        if not gifting and not wishing:
+            return True
+        else:
+            return False
+
     # flask_login 默认需要的函数，用了获取实体类对象的唯一标示
     # 这里通过继承的方式，不在需要重写
     # def get_id(self):
     #     return self.id
 
 # print(a)
+@login_manager.user_loader
+def get_user(user_id):
+    return db.session.query(User).get(user_id)
 # @login_manager.user_loader
-# def get_user(user_id):
-#     return db.session.query(User).get(user_id)
+# def get_user(uid):
+#     return User.query.get(int(uid))

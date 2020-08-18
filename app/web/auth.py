@@ -2,7 +2,6 @@ from flask import render_template, request, redirect, url_for, flash
 
 from . import web
 
-__author__ = '七月'
 
 from ..forms.auth import RegisterForm, LoginForm
 from ..models.base import db
@@ -17,7 +16,7 @@ def register():
         user.set_attrs(form.data)
         db.session.add(user)
         db.session.commit()
-        redirect(url_for('web.login'))
+        return redirect(url_for('web.login'))
         pass
     return render_template('auth/register.html', form=form)
     pass
@@ -30,7 +29,11 @@ def login():
         user = User.query.filter_by(email = form.data['email']).first()
         if user and user.check_password(form.data['password']):
             login_user(user)
-            pass
+            next = request.args.get('next')
+            # 防止跨站脚本攻击
+            if not next or not next.startswith('/'):
+                next = url_for('web.index')
+            return redirect(next)
         else:
             flash('账号不存在或者密码有误')
     return render_template('auth/login.html',form = form)

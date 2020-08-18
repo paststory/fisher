@@ -19,6 +19,7 @@ class RegisterForm(Form):
     email = StringField('电子邮件', validators={DataRequired(), Length(1, 64),
                                             Email(message='电子邮箱不符合规范')})
 
+    # 会自动检测字段位为email是否符合要求
     def validate_email(self,field):
         if User.query.filter_by(email = field.data).first():
             raise ValidationError('电子邮箱已被注册')

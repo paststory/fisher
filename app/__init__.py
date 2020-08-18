@@ -6,16 +6,15 @@
 from flask import Flask
 
 from app.models.book import db
-from app.models.user import User
-from app.web import web
+# from app.models.user import User
 from flask_login import LoginManager
 
 login_manager = LoginManager()
 
-@login_manager.user_loader
-def load_user(user_id):
-    user = db.session.query(User).get(user_id)
-    return user
+# @login_manager.user_loader
+# def load_user(user_id):
+#     user = db.session.query(User).get(user_id)
+#     return user
 
 def create_app():
     app = Flask(__name__)
@@ -24,6 +23,9 @@ def create_app():
     register_blueprints(app)
     db.init_app(app)
     login_manager.init_app(app)
+    # 没有登录的时候，跳转到的页面
+    login_manager.login_view = 'web.login'
+    login_manager.login_message = '请先登录或注册'
     # 方法一
     db.create_all(app=app)
     # 方法二
@@ -32,4 +34,6 @@ def create_app():
     return app
 
 def register_blueprints(app):
+    # 防止循环导入的出现
+    from app.web import web
     app.register_blueprint(web)
