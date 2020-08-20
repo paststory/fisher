@@ -6,14 +6,18 @@ from . import web
 # from .. import login_manager
 from ..models.base import db
 from ..models.gift import Gift
+from ..view_models.gift import MyGifts
 
 
 @web.route('/my/gifts')
 @login_required
 def my_gifts():
-    return 'my gift'
-    pass
-
+    uid = current_user.id
+    gifts_of_mime = Gift.get_user_gifts(uid)
+    isbn_list = [gift.isbn for gift in gifts_of_mime]
+    wish_count_list = Gift.get_wish_counts(isbn_list)
+    view_model = MyGifts(gifts_of_mime, wish_count_list)
+    return render_template('my_gifts.html', gifts = view_model.my_gifts)
 
 @web.route('/gifts/book/<isbn>')
 @login_required

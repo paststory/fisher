@@ -15,7 +15,7 @@ class YuShuBook:
     isbn_url = 'http://t.yushu.im/v2/book/isbn/{}'
     keyword_url = 'http://t.yushu.im/v2/book/search?q={}&count={}&start={}'
 
-    def __init__(self):
+    def  __init__(self):
         self.books = []
         self.total = 0
 
