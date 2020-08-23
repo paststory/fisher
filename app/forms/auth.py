@@ -3,7 +3,7 @@
 # @Author  : yang
 # @File    : auth.py
 from wtforms import Form, StringField, PasswordField
-from wtforms.validators import DataRequired, Length, Email, ValidationError
+from wtforms.validators import DataRequired, Length, Email, ValidationError, EqualTo
 import email_validator
 
 from app.models.user import User
@@ -32,3 +32,14 @@ class LoginForm(Form):
     # def validate_email(self,field):
     #     if User.query.filter_by(email = field.data).first():
     #         raise ValidationError('电子邮箱已被注册')
+
+class EmailForm(Form):
+    email = StringField('电子邮件', validators={DataRequired(), Length(1, 64),
+                                            Email(message='电子邮箱不符合规范')})
+
+class ResetPasswordForm(Form):
+    password1 = PasswordField('新密码', validators=[
+        DataRequired(), Length(6, 20, message='密码长度至少需要在6到20个字符之间'),
+        EqualTo('password2', message='两次输入的密码不相同')])
+    password2 = PasswordField('确认新密码', validators=[
+        DataRequired(), Length(6, 20)])

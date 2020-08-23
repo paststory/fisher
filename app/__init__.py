@@ -8,8 +8,10 @@ from flask import Flask
 from app.models.book import db
 # from app.models.user import User
 from flask_login import LoginManager
+from flask_mail import Mail
 
 login_manager = LoginManager()
+mail = Mail()
 
 # @login_manager.user_loader
 # def load_user(user_id):
@@ -22,6 +24,7 @@ def create_app():
     app.config.from_object('app.secure')
     register_blueprints(app)
     db.init_app(app)
+    mail.init_app(app)
     login_manager.init_app(app)
     # 没有登录的时候，跳转到的页面
     login_manager.login_view = 'web.login'

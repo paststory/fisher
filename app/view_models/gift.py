@@ -18,8 +18,8 @@ class MyGifts:
         for gift in gifts:
             count = 0
             for wish_count in wishes_count:
-                if gift.isbn == wish_count[1]:
-                    count = wish_count[0]
+                if gift.isbn == wish_count['isbn']:
+                    count = wish_count['count']
             else:
                 r = {
                     'wishes_count': count,

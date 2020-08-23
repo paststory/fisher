@@ -7,7 +7,7 @@ from sqlalchemy import Column, Integer, ForeignKey, String, Boolean, SmallIntege
 from sqlalchemy.orm import relationship
 
 from app.models.base import db, Base
-from app.models.wish import Wish
+
 from app.spider.yushu_book import YuShuBook
 
 
@@ -52,6 +52,7 @@ class Gift(Base):
 
     @classmethod
     def get_wish_counts(cls, isbn_list):
+        from app.models.wish import Wish
         count_list = db.session.query(Wish.isbn, func.count(Wish.id)).filter(Wish.status == 1,
                                           Wish.launched == False,
                                           Wish.isbn.in_(isbn_list)).group_by(Wish.isbn).all()

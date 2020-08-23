@@ -2,12 +2,14 @@
 # @Time    : 2020/8/17 15:05
 # @Author  : yang
 # @File    : user.py
+from flask import current_app
 from flask_login import UserMixin
 from sqlalchemy import Column, ForeignKey, func
 from sqlalchemy import String, Unicode, DateTime, Boolean
 from sqlalchemy import SmallInteger, Integer, Float
 from sqlalchemy.orm import relationship
 from werkzeug.security import generate_password_hash, check_password_hash
+from itsdangerous import TimedJSONWebSignatureSerializer as Serializer
 
 from app import login_manager
 from app.libs.helper import is_isbn_or_key
@@ -61,6 +63,25 @@ class User(UserMixin,Base):
             return True
         else:
             return False
+
+    # 生成token
+    def generate_token(self, expiration=600):
+        s = Serializer(current_app.config['SECRET_KEY'], expiration)
+        return s.dumps({'id': self.id}).decode('utf-8')
+
+    @staticmethod
+    def reset_password(token, new_password):
+        s = Serializer(current_app.config['SECRET_KEY'])
+        try:
+            data = s.loads(token.encode('utf-8'))
+        except:
+            return False
+        user = User.query.get(data.get('id'))
+        if user is None:
+            return False
+        user.password = new_password
+        db.session.commit()
+        return True
 
     # flask_login 默认需要的函数，用了获取实体类对象的唯一标示
     # 这里通过继承的方式，不在需要重写
