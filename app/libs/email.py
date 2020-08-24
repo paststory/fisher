@@ -18,6 +18,9 @@ def send_async_email(app, msg):
 
 
 def send_email(to, subject, template, **kwargs):
+    # current_app 为代理对象，每个线程中都会动态的重新赋值
+    # 这里获取app的实例对象，就不会出现这种问题
+    # 不然会报错 working outside of application context
     app = current_app._get_current_object()
     msg = Message('[鱼书]' + ' ' + subject,
                   sender=app.config['MAIL_USERNAME'], recipients=[to])
