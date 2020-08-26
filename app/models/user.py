@@ -12,8 +12,10 @@ from werkzeug.security import generate_password_hash, check_password_hash
 from itsdangerous import TimedJSONWebSignatureSerializer as Serializer
 
 from app import login_manager
+from app.libs.enums import PendingStatus
 from app.libs.helper import is_isbn_or_key
 from app.models.base import db, Base
+from app.models.drift import Drift
 from app.models.gift import Gift
 from app.models.wish import Wish
 from app.spider.yushu_book import YuShuBook
@@ -83,6 +85,28 @@ class User(UserMixin,Base):
         db.session.commit()
         return True
 
+    def can_satisfied_wish(self, current_gift_id = None):
+        if current_gift_id:
+            gift = Gift.query.get(current_gift_id)
+            if gift.uid == self.id:
+                return False
+        # 请求书籍会消耗鱼豆，必须保证拥有鱼豆
+        if self.beans < 1:
+            return False
+        success_gifts = Drift.query.filter(Drift.pending == PendingStatus.success,
+                                           Gift.uid == self.id).count()
+        success_receive = Drift.query.filter(Drift.pending == PendingStatus.success,
+                                             Drift.requester_id == self.id).count()
+        return False if success_gifts <= success_receive-2 else True
+
+    @property
+    def summary(self):
+        return dict(
+            nickname=self.nickname,
+            beans=self.beans,
+            email=self.email,
+            send_receive=str(self.send_counter) + '/' + str(self.receive_counter)
+        )
     # flask_login 默认需要的函数，用了获取实体类对象的唯一标示
     # 这里通过继承的方式，不在需要重写
     # def get_id(self):

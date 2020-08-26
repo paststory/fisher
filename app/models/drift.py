@@ -23,10 +23,12 @@ class Drift(Base):
     address = Column(String(100), nullable=False)
     message = Column(String(200))
     mobile = Column(String(20), nullable=False)
+
     isbn = Column(String(13))
     book_title = Column(String(50))
     book_author = Column(String(30))
     book_img = Column(String(50))
+
     # requester_id = Column(Integer, ForeignKey('user.id'))
     # requester = relationship('User')
     requester_id = Column(Integer)
@@ -36,7 +38,7 @@ class Drift(Base):
     gifter_id = Column(Integer)
     gift_id = Column(Integer)
     gifter_nickname = Column(String(20)) # 合理利用冗余，减少数据库查询次数，还有这里的业务更希望记录的是历史数据而不是实时的
-    _pending = Column('pending', SmallInteger, default=1)
+    _pending = Column('pending', SmallInteger, default=1) # 鱼漂状态
     # gift_id = Column(Integer, ForeignKey('gift.id'))
     # gift = relationship('Gift')
 
