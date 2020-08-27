@@ -93,10 +93,12 @@ class User(UserMixin,Base):
         # 请求书籍会消耗鱼豆，必须保证拥有鱼豆
         if self.beans < 1:
             return False
+        #
         success_gifts = Drift.query.filter(Drift.pending == PendingStatus.success,
                                            Gift.uid == self.id).count()
         success_receive = Drift.query.filter(Drift.pending == PendingStatus.success,
                                              Drift.requester_id == self.id).count()
+        # 送出的礼物不能比收到的礼物少2本以上
         return False if success_gifts <= success_receive-2 else True
 
     @property

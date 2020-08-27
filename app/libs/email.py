@@ -35,7 +35,8 @@ def send_test():
     mail.send(msg)
     pass
 
-send_test()
+if __name__ == '__main__':
+    send_test()
 
 
 

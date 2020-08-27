@@ -31,10 +31,11 @@ class Drift(Base):
 
     # requester_id = Column(Integer, ForeignKey('user.id'))
     # requester = relationship('User')
+    # 请求者id
     requester_id = Column(Integer)
     requester_nickname = Column(String(20))
 
-    #
+    # 赠送者id
     gifter_id = Column(Integer)
     gift_id = Column(Integer)
     gifter_nickname = Column(String(20)) # 合理利用冗余，减少数据库查询次数，还有这里的业务更希望记录的是历史数据而不是实时的
